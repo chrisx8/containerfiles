@@ -1,0 +1,5 @@
+ARG VERSION
+FROM docker.io/sharelatex/sharelatex:$VERSION
+
+RUN tlmgr update --self && \
+    tlmgr install scheme-medium

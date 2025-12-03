@@ -1,0 +1,40 @@
+---
+name: Build container images
+
+on: # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: 0 3 * * */2
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sharelatex:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ${{ github.job }}
+      IMAGE_TAG: 6.0.1
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v6
+      - name: Build container image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          build-args: VERSION=${{ env.IMAGE_TAG }}
+          containerfiles: ${{ env.IMAGE_NAME }}/Containerfile
+          context: ${{ env.IMAGE_NAME }}
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG }}
+      - name: Push to ghcr.io
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG }}
+          registry: ghcr.io/${{ github.repository_owner }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
