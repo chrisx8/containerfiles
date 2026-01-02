@@ -1,10 +1,13 @@
 ---
-name: Build container images
+name: Build sharelatex
 
 on: # yamllint disable-line rule:truthy
   push:
     branches:
       - main
+    paths:
+      - .github/workflows/build_sharelatex.yml
+      - sharelatex/**
   schedule:
     - cron: 0 3 * * */2
   workflow_dispatch:
