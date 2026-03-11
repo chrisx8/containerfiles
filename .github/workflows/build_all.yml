@@ -1,0 +1,48 @@
+---
+name: Build all
+
+on: # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: 0 3 * * */2
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  find_containers:
+    name: Find containers to build
+    runs-on: ubuntu-latest
+    outputs:
+      containers: ${{ steps.find.outputs.containers }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v6
+      - name: Find directories
+        id: find
+        run: |
+          containers=$(find . -maxdepth 2 -type f -name Makefile -exec dirname {} \; | jq -R -c 'split("\n")')
+          echo "containers=$containers" >> $GITHUB_OUTPUT
+
+  build_and_push:
+    name: Build and push container
+    runs-on: ubuntu-latest
+    needs: find_containers
+    strategy:
+      matrix:
+        container: ${{ fromJson(needs.find_containers.outputs.containers) }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v6
+      - name: Build container
+        run: |
+          cd ${{ matrix.container }}
+          make build
+      - name: Push to registry
+        run: |
+          cd ${{ matrix.container }}
+          make push
