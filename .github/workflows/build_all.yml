@@ -25,7 +25,7 @@ jobs:
       - name: Find directories
         id: find
         run: |
-          containers=$(find . -maxdepth 2 -type f -name Makefile -exec dirname {} \; | jq -R -c 'split("\n")')
+          containers=$(find . -maxdepth 2 -type f -name Makefile -exec dirname {} \; | sed -z 's/\n$//' | jq -R -s -c 'split("\n")')
           echo "containers=$containers" >> $GITHUB_OUTPUT
 
   build_and_push:
@@ -45,4 +45,5 @@ jobs:
       - name: Push to registry
         run: |
           cd ${{ matrix.container }}
+          podman login --username="${{ github.repository_owner }}" --password="${{ secrets.GITHUB_TOKEN }}" ghcr.io
           make push
