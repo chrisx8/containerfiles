@@ -21,7 +21,7 @@ jobs:
       containers: ${{ steps.find.outputs.containers }}
     steps:
       - name: Check out repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Find directories
         id: find
         run: |
@@ -37,7 +37,7 @@ jobs:
         container: ${{ fromJson(needs.find_containers.outputs.containers) }}
     steps:
       - name: Check out repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Build container
         run: |
           cd ${{ matrix.container }}
