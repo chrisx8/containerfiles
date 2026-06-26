@@ -1,10 +1,8 @@
 ARG VERSION
 FROM docker.io/sharelatex/sharelatex:$VERSION
 
-ARG TL_REPO="https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2025/tlnet-final/"
-
-RUN tlmgr update --repository "$TL_REPO" --self && \
-    tlmgr install --repository "$TL_REPO" \
+RUN tlmgr update --self && \
+    tlmgr install \
         scheme-medium \
         enumitem \
         preprint \
