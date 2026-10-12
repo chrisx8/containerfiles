@@ -4,6 +4,7 @@ FROM docker.io/sharelatex/sharelatex:$VERSION
 RUN tlmgr update --self && \
     tlmgr install \
         scheme-medium \
+        collection-langchinese \
         enumitem \
         preprint \
         titlesec
