@@ -7,4 +7,5 @@ RUN tlmgr update --self && \
         collection-langchinese \
         enumitem \
         preprint \
-        titlesec
+        titlesec \
+        xcharter

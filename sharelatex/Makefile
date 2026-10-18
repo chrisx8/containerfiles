@@ -1,5 +1,5 @@
 IMAGE = ghcr.io/chrisx8/sharelatex
-VERSION ?= 6.3.0
+VERSION ?= 6.3.1
 
 .PHONY: build push
 
